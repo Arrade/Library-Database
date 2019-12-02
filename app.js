@@ -7,14 +7,14 @@ dust = require('dustjs-helpers'),
 app = express();
 
 // DB connection
-const connectionString = "postgres://jaceDB:12345@localhost/libarySystem";
+const connectionString = "postgres://jacobwik:muJukH4tuuvA@nestor2.csc.kth.se:5432/jacobwik";
 
 const client = new Client({
     connectionString:connectionString
-});
+})
 
 app.get('/', function(req, res){
-    // connect
+    // connectdddd
     client.query('SELECT * FROM books', function(err,result){
             
         if(err){

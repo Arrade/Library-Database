@@ -3,7 +3,10 @@
 {<body}
     {#books}
         <div class="well">
-            {title}
+            <H4>
+                {title} 
+                <button class="btn btn-default">View</button>
+            </H4>
         </div>
     {/books}
 {/body}
