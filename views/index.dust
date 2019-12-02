@@ -4,9 +4,20 @@
     {#books}
         <div class="well">
             <H4>
-                {title} 
+                {fullName} 
+                
                 <button class="btn btn-default">View</button>
             </H4>
+            <p>User ID: {userID}
+                <br />
+                Name: {fullName}
+                <br />
+                Email: {email}
+                <br />
+                Bostadsadress: {bostadsAdress}
+                <br />
+                date of birth: {dateOfBirth}
+            </p>
         </div>
     {/books}
 {/body}

@@ -15,7 +15,7 @@ const client = new Client({
 
 app.get('/', function(req, res){
     // connectdddd
-    client.query('SELECT * FROM books', function(err,result){
+    client.query('SELECT * FROM users NATURAL JOIN admins', function(err,result){
             
         if(err){
             return console.error('error running query', err);
@@ -45,42 +45,3 @@ app.use(bodyParser.urlencoded({ extended: false}));
 app.listen(3000, function(){
 console.log('server started on port 3000')
 });
-
-/*
-app.get('/', function(req, res){
-    // PG connect
-    pg.connect(connect, function(err, client, done){
-        if(err) {
-            return console.error('error fetching client from pool', err);
-        }
-        client.query('SELECT * FROM books', function(err,result){
-            
-            if(err){
-                return console.error('error running query', err);
-            }
-            res.render('index', {books: result.rows});
-            done();
-        });
-    });
-});*/
-
-/*
-app.get('/', function(req, res){
-    // PG connect
-    pg.connect(connect, function(err, client, done){
-        if(err) {
-            return console.error('error fetching client from pool', err);
-        }
-        
-        client.query('SELECT * FROM users',(err,res)=>{
-            console.log(err,res)
-            client.end()
-       
-            if(err){
-               return console.error('error running query', err);
-           }
-           res.render('index', {books: result.rows});
-           done();
-        });
-    });
-});*/
