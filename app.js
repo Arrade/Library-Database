@@ -156,7 +156,11 @@ app.post('/filterUsers',function(req,res){
         if(!query.includes('WHERE')){
             query = query.concat('WHERE ');
         }
-        
+        else{
+            query = query.concat('AND ');
+        }
+        query = query.concat("lower(\"fullName\") LIKE \'%"+req.body.fullName+"%\'");
+
     }
     console.log(query)
     client.query(query, function(err,result){
