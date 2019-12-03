@@ -159,9 +159,27 @@ app.post('/filterUsers',function(req,res){
         else{
             query = query.concat('AND ');
         }
-        query = query.concat("lower(\"fullName\") LIKE \'%"+req.body.fullName+"%\'");
+        query = query.concat("lower(\"fullName\") LIKE \'%"+ req.body.fullName.toLowerCase() +"%\'");
 
     }
+    if(req.body.email) {
+        if(!query.includes('WHERE')){
+            query = query.concat('WHERE ');
+        } else {
+            query = query.concat('AND ');
+        }
+        query = query.concat("lower(\"email\") LIKE \'%"+ req.body.email.toLowerCase() +"%\'")
+    }
+    if(req.body.bostadsAdress) {
+        if(!query.includes('WHERE')) {
+            query = query.concat('WHERE ');
+        } else {
+            query = query.concat('AND ');
+        }
+        query = query.concat("lower(\"bostadsAdress\") LIKE \'%"+ req.body.bostadsAdress.toLowerCase() +"%\'")
+    }
+
+
     console.log(query)
     client.query(query, function(err,result){
             

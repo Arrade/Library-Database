@@ -1,0 +1,17 @@
+{>"layout" /}
+
+{<body}
+
+<form action="/">
+    <input type="submit" value="Users">
+</form>
+
+<br />
+<br />
+<br />
+
+{#borrow}
+
+{/borrow}
+
+{/body}
