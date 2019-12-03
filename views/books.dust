@@ -1,0 +1,100 @@
+{>"layout" /}
+
+{<body}
+<form action="/">
+    <input type="submit" value="Users">
+</form>
+
+<br />
+
+<form id="addBookForm" action="addBook" method="post">
+    <div>
+        <div class="form-group">
+                <label>Title</label>
+                <input type="text" class="form-control" name="title"/>
+        </div>
+        <div class="form-group">
+                <label>Media ID</label>
+                <input type="text" class="form-control" name="mediaID"/>
+        </div>
+        <div class="form-group">
+                <label>Genre</label>
+                <input type="text" class="form-control" name="genre"/>
+        </div>
+        <div class="form-group">
+                <label>ISBN</label>
+                <input type="text" class="form-control" name="ISBN"/>
+        </div>
+        <div class="form-group">
+                <label>Edition</label>
+                <input type="text" class="form-control" name="edition"/>
+        </div>
+        <div class="form-group">
+                <label>Language</label>
+                <input type="text" class="form-control" name="language"/>
+        </div>
+        <div class="form-group">
+                <label>Publisher</label>
+                <input type="text" class="form-control" name="publisher"/>
+        </div>
+        <div class="form-group">
+                <label>Date of Publication</label>
+                <input type="date" class="form-control" name="dateOfPublication"/>
+        </div>
+        <div class="form-group">
+                <label>Pages</label>
+                <input type="text" class="form-control" name="pages"/>
+        </div>
+        <div class="form-group">
+                <label>Prequel ID</label>
+                <input type="text" class="form-control" name="prequelID"/>
+        </div>
+        <div class="form-group">
+                <label>Sequel ID</label>
+                <input type="text" class="form-control" name="sequelID"/>
+        </div>
+        <div class="form-group">
+                <label>Series</label>
+                <input type="text" class="form-control" name="series"/>
+        </div>
+        <input type="submit" class="btn btn-primary btn-block" name="addBook" value="Add book"/>
+    </div>
+</form>
+
+    <br />
+
+    {#books}
+        <div class="well">
+            <H4>
+                {title} 
+                <button class="btn btn-default pull-right"
+                data-toggle="collapse" href=#user_{id}
+                aria-expanded="false" aria-controls="user_{id}">
+                view
+                </button>
+            </H4>
+
+            <p>
+                Media ID: {mediaID}
+                <br />
+                Genre: {genre}
+                <br />
+                ISBN: {ISBN}
+                <br />
+                Edition: {edition}
+                <br />
+                Language: {language}
+            </p>
+
+            <button class="btn btn-default edit-book">
+                    Edit
+            </button>
+            <form id="deleteBookForm" action="deleteBook" method="post">
+                <input type="hidden" value={mediaID} name="mediaID"/>
+                <input type="submit" class="btn btn-default delete-book" name="deleteBook" value="Delete"/>
+            </form>
+        </div>
+    {/books}
+
+    
+{/body}
