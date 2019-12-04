@@ -48,7 +48,7 @@ app.get('/', function(req, res){
 app.get('/books', function(req, res){
     // connected
     //NATURAL JOIN "contProd_map"  NATURAL JOIN "contProducer"
-    client.query('SELECT * FROM books NATURAL JOIN \"bookMap\"', function(err,result){
+    client.query('SELECT * FROM books NATURAL JOIN \"bookMap\" NATURAL JOIN \"contProd_map\"  NATURAL JOIN \"contProducer\"', function(err,result){
         if(err){
             return console.error('error running query', err);
         }
@@ -109,7 +109,7 @@ app.post('/addBook',function(req,res){
         
    
 
-    const query = {
+    const query2 = {
         text: 'INSERT INTO \"bookMap\"(\"mediaID\", \"resourceID\")'+ 
         'VALUES($1, $2)',
         values: [req.body.mediaID, req.body.resourceID],
@@ -117,8 +117,8 @@ app.post('/addBook',function(req,res){
 
     pool.connect((err, client, done) => {
         if (err) throw err  
-    console.log(query);
-    client.query(query,(err, res) => {
+    console.log(query2);
+    client.query(query2,(err, res) => {
         if (err) {
             console.log(err.stack)
           } else {
@@ -128,6 +128,46 @@ app.post('/addBook',function(req,res){
         done();
         
     });
+
+    const query3 = {
+        text: 'INSERT INTO \"contProducer\"(\"contentProducerID\",\"name\", \"role\")'+ 
+        'VALUES($1, $2, \'Author\')',
+        values: [req.body.contentProducerID, req.body.name],
+    };
+
+    pool.connect((err, client, done) => {
+        if (err) throw err  
+    console.log(query3);
+    client.query(query3,(err, res) => {
+        if (err) {
+            console.log(err.stack)
+          } else {
+            console.log(res.rows[0])
+          }
+        });
+        done();
+
+        const query4 = {
+            text: 'INSERT INTO \"contProd_map\" (\"mediaID\",\"contentProducerID\")'+ 
+            'VALUES($1, $2)',
+            values: [req.body.mediaID, req.body.contentProducerID],
+        };
+    
+        pool.connect((err, client, done) => {
+            if (err) throw err  
+        console.log(query4);
+        client.query(query4,(err, res) => {
+            if (err) {
+                console.log(err.stack)
+              } else {
+                console.log(res.rows[0])
+              }
+            });
+            done();
+            
+        });
+    });
+
 });
     function function2() {
         res.redirect('books') 
@@ -208,8 +248,60 @@ app.post('/addUser',function(req,res){
     setTimeout(function2, 500);
 });
 
-app.post('/updateBook',function(req,res){
+app.post('/returnBorrow',function(req,res){
     console.log("mediaID: "+req.body.mediaID)
+    const query = {
+        text: 'UPDATE borrowed SET \"returnDate\" = CURRENT_DATE'+ 
+        ' WHERE \"borrowingID\" = $1',
+        values: [req.body.borrowingID],
+    };
+
+    pool.connect((err, client, done) => {
+        if (err) throw err  
+    console.log(query);
+    client.query(query,(err, res) => {
+        if (err) {
+            console.log(err.stack)
+          } else {
+            console.log(res.rows[0])
+          }
+        });
+        done();
+    });
+    function function2() {
+        res.redirect('borrow') 
+        }
+    setTimeout(function2, 500);
+});
+
+app.post('/renewBorrow',function(req,res){
+    console.log("mediaID: "+req.body.mediaID)
+    const query = {
+        text: 'UPDATE borrowed SET \"dateOfBorrowing\" = CURRENT_DATE'+ 
+        ' WHERE \"borrowingID\" = $1',
+        values: [req.body.borrowingID],
+    };
+
+    pool.connect((err, client, done) => {
+        if (err) throw err  
+    console.log(query);
+    client.query(query,(err, res) => {
+        if (err) {
+            console.log(err.stack)
+          } else {
+            console.log(res.rows[0])
+          }
+        });
+        done();
+    });
+    function function2() {
+        res.redirect('borrow') 
+        }
+    setTimeout(function2, 500);
+});
+
+app.post('/updateBook',function(req,res){
+    
     const query = {
         text: 'UPDATE books SET title = $2, genre = $3, \"ISBN\" = $4, edition = $5, language = $6,'+ 
         'publisher = $7, \"dateOfPublication\" = $8, pages = $9, \"prequelID\" = $10, \"sequelID\" = $11, series = $12 '+ 
@@ -230,6 +322,44 @@ app.post('/updateBook',function(req,res){
           }
         });
         done();
+
+        const query1 = {
+            text: 'INSERT INTO \"contProducer\" (\"contentProducerID\", name, role) '+
+            'VALUES($1, $2, \'Author\')',
+            values: [req.body.contentProducerID, req.body.name],
+        };
+    
+        pool.connect((err, client, done) => {
+            if (err) throw err  
+        console.log(query1);
+        client.query(query1,(err, res) => {
+            if (err) {
+                console.log(err.stack)
+              } else {
+                console.log(res.rows[0])
+              }
+                const query2 = {
+                    text: 'UPDATE \"contProd_map\" SET \"contentProducerID\" = $2 '+ 
+                    'WHERE \"mediaID\" = $1',
+                    values: [req.body.mediaID, req.body.contentProducerID],
+                };
+            
+                pool.connect((err, client, done1) => {
+                    if (err) throw err  
+                console.log(query2);
+                client.query(query2,(err, res) => {
+                    if (err) {
+                        console.log(err.stack)
+                    } else {
+                        console.log(res.rows[0])
+                    }
+                    });
+                    done1();
+                    
+                });   
+            });
+            done();        
+        });        
     });
     function function2() {
         res.redirect('books') 
@@ -267,9 +397,9 @@ app.post('/updateUser',function(req,res){
 app.post('/addBorrow',function(req,res){
     const query = {
         text: 'INSERT INTO borrowed(\"borrowingID\", \"userID\", \"resourceID\", \"dateOfBorrowing\", \"expireDate\", \"returnDate\", \"timesRenewed\")'+ 
-        'VALUES($1, $2, $3, $4, $5, $6, $7)',
+        'VALUES($1, $2, $3, $4, $5, NULL, $6)',
         values: [req.body.borrowingID, req.body.userID, req.body.resourceID, req.body.dateOfBorrowing, req.body.expireDate, 
-            req.body.returnDate, req.body.timesRenewed],
+             req.body.timesRenewed],
     };
 
     pool.connect((err, client, done) => {

@@ -12,6 +12,8 @@ $(document).ready(function(){
         $('#prequelID').val($(this).data('prequelid'));
         $('#sequelID').val($(this).data('sequelid'));
         $('#series').val($(this).data('series'));
+        $('#name').val($(this).data('name'));
+        $('#contentProducerID').val($(this).data('contentproducerid'));
     });
 
     $('.edit-users').on('click', function(){     
