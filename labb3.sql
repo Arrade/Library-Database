@@ -64,7 +64,7 @@ CREATE TABLE "borrowed" (
 CREATE TABLE "fines" (
     "borrowingID" int REFERENCES borrowed,
     "amount" int CHECK ("amount" >= 0),
-    "paid" boolean CHECK ("paid" >= 0),
+    "paid" int CHECK ("paid" >= 0),
     "daysOverExp" int CHECK ("daysOverExp" >= 0)
 );
 
