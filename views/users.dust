@@ -5,8 +5,17 @@
 <form action="books">
         <input type="submit" value="Books">
 </form>
+<form action="borrow">
+        <input type="submit" value="Borrow">
+</form>
+
+<form action="fines">
+    <input type="submit" value="Fines">
+</form>
 
 <br />
+
+        <!--  Add  -->
 
 <form id="addUserForm" action="addUser" method="post"></body>
     <div>
@@ -37,6 +46,8 @@
 
 <br />
 
+        <!--  Filter  -->
+
 <H3>Filter</H3>
 <form id="filterUsersForm" action="filterUsers" method="post">
 <div>   
@@ -65,6 +76,8 @@
 </div>
 </form>
         <br />
+
+            <!--  Display of users  -->
 
     {#books}
         <div class="well">

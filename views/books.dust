@@ -7,6 +7,8 @@
 
 <br />
 
+                <!--  Add  -->
+
 <form id="addBookForm" action="addBook" method="post">
     <div>
         <div class="form-group">
@@ -62,6 +64,35 @@
 </form>
 
     <br />
+
+                <!--  Filter  -->
+
+    <H3>Filter</H3>
+        <form id="filterBooksForm" action="filterBooks" method="post">
+                <div>   
+                <div class = "well">
+                <legend>Search</legend>
+
+                <label>Title</label>
+                <input type="text" class="form-control" name="title"/>
+                <br />
+                <label>Media ID</label>
+                <input type="text" class="form-control" name="mediaID"/>
+                <br />
+                <label>Genre</label>
+                <input type="text" class="form-control" name="genre"/>
+                <br />
+                <label>ISBN</label>
+                <input type="text" class="form-control" name="ISBN"/>
+                <br />
+                <label>Language</label>
+                <input type="text" class="form-control" name="language"/>
+                </div>
+                <input type="submit" class="btn btn-primary btn-block" name="deleteUser" value="Filter"/>
+                </div>
+        </form>
+
+                <!--  Display of borrows  -->
 
     {#books}
         <div class="well">
