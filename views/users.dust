@@ -5,8 +5,17 @@
 <form action="books">
         <input type="submit" value="Books">
 </form>
+<form action="borrow">
+        <input type="submit" value="Borrow">
+</form>
+
+<form action="fines">
+    <input type="submit" value="Fines">
+</form>
 
 <br />
+
+        <!--  Add  -->
 
 <form id="addUserForm" action="addUser" method="post"></body>
     <div>
@@ -19,7 +28,7 @@
                 <input type="text" class="form-control" name="fullName"/>
         </div>
         <div class="form-group">
-                <label>email</label>
+                <label>Email</label>
                 <input type="email" class="form-control" name="email"/>
         </div>
         <div class="form-group">
@@ -44,24 +53,38 @@
 
 <br />
 
+        <!--  Filter  -->
+
 <H3>Filter</H3>
 <form id="filterUsersForm" action="filterUsers" method="post">
 <div>   
     <div class = "well">
         <legend>Choose type of user</legend>
-        <label>Student</label>
+        &emsp;&emsp;
+        <label>Student &ensp;</label>
         <input type='radio' name='rad' value='student'>
-        <label>Admin</label>
+        &emsp;&emsp;&emsp;
+        <label>Admin &ensp;</label>
         <input type='radio' name='rad' value='admin'>
+        <br />
+        <br />
         <legend>Search</legend>
         <label>Full Name</label>
         <input type="text" class="form-control" name="fullName"/>
+        <br />
+        <label>Email</label>
+        <input type="text" class="form-control" name="email"/>
+        <br />
+        <label>Adress</label>
+        <input type="text" class="form-control" name="bostadsAdress"/>
 
     </div>
     <input type="submit" class="btn btn-primary btn-block" name="deleteUser" value="Filter"/>
 </div>
 </form>
         <br />
+
+            <!--  Display of users  -->
 
     {#books}
          <!-- collapse -->

@@ -1,0 +1,87 @@
+{>"layout" /}
+
+{<body}
+
+<form action="/">
+    <input type="submit" value="Users">
+</form>
+
+<br />
+
+        <!--  Add  -->
+
+<form id="addFinesForm" action="addFines" method="post"></body>
+    <div>
+        <div class="form-group">
+                <label>Borrowing ID</label>
+                <input type="text" class="form-control" name="borrowingID"/>
+        </div>
+        <div class="form-group">
+            <label>Amount</label>
+            <input type="text" class="form-control" name="amount"/>
+        </div>
+        <div class="form-group">
+            <label>Paid</label>
+            <input type="text" class="form-control" name="paid"/>
+        </div>
+        <div class="form-group">
+            <label>Days past Expiration</label>
+            <input type="text" class="form-control" name="daysOverExp"/>
+        </div>
+    </div>
+
+    <input type="submit" class="btn btn-primary btn-block" name="addFines" value="Add Fine"/> 
+</form>
+
+        <!--  Filter  -->
+
+<H3>Filter</H3>
+<form id="filterFinesForm" action="filterFines" method="post">
+<div>   
+    <div class = "well">
+        <legend>Search</legend>
+        <label>Borrowing ID</label>
+        <input type="text" class="form-control" name="borrowingID"/>
+    </div>
+    <input type="submit" class="btn btn-primary btn-block" name="deleteUser" value="Filter"/>
+</div>
+</form>
+
+<br />
+
+        <!--  Display of fines  -->
+
+{#fines}
+
+<div class="well">
+    <h4>
+        {borrowingID}
+        <button class="btn btn-default pull-right"
+            data-toggle="collapse" href=#user_{id}
+            aria-expanded="false" aria-controls="user_{id}">
+            view
+        </button>
+    </h4>
+
+    <p>
+            Borrowing ID: {borrowingID}
+            <br />
+            Amount: {amount}
+            <br />
+            Paid: {paid}
+            <br />
+            Days past Expiration: {daysOverExp}
+        </p>
+
+        <button class="btn btn-default edit-book">
+                Edit
+        </button>
+        <form id="deleteFinesForm" action="deleteFines" method="post">
+            <input type="hidden" value={borrowingID} name="borrowingID"/>
+            <input type="submit" class="btn btn-default delete-book" name="deleteFines" value="Delete"/>
+        </form>
+</div>
+
+{/fines}
+
+{/body}

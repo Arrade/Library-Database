@@ -1,0 +1,114 @@
+{>"layout" /}
+
+{<body}
+
+<form action="/">
+    <input type="submit" value="Users">
+</form>
+
+<br />
+
+        <!--  Add  -->
+
+<form id="addBorrowForm" action="addBorrow" method="post"></body>
+    <div>
+        <div class="form-group">
+                <label>Borrowing ID</label>
+                <input type="text" class="form-control" name="borrowingID"/>
+        </div>
+        <div class="form-group">
+                <label>User ID</label>
+                <input type="text" class="form-control" name="userID"/>
+        </div>
+        <div class="form-group">
+                <label>resource ID</label>
+                <input type="text" class="form-control" name="resourceID"/>
+        </div>
+        <div class="form-group">
+                <label>Date of borrowing</label>
+                <input type="date" class="form-control" name="dateOfBorrowing"/>
+        </div>
+        <div class="form-group">
+                <label>Expire Date</label>
+                <input type="date" class="form-control" name="expireDate"/>
+        </div>
+        <div class="form-group">
+                <label>Return Date</label>
+                <input type="date" class="form-control" name="returnDate"/>
+        </div>
+        <div class="form-group">
+                <label>Times Renewed</label>
+                <input type="text" class="form-control" name="timesRenewed"/>
+        </div>
+    </div>
+
+    <input type="submit" class="btn btn-primary btn-block" name="addBook" value="Add Borrow"/> 
+</form>
+
+<br />
+
+        <!--  Filter  -->
+
+<H3>Filter</H3>
+<form id="filterBorrowForm" action="filterBorrow" method="post">
+<div>   
+    <div class = "well">
+        <legend>Search</legend>
+        <label>Borrowing ID</label>
+        <input type="text" class="form-control" name="borrowingID"/>
+        <br />
+        <label>User ID</label>
+        <input type="text" class="form-control" name="userID"/>
+        <br />
+        <label>Resource ID</label>
+        <input type="text" class="form-control" name="resourceID"/>
+
+    </div>
+    <input type="submit" class="btn btn-primary btn-block" name="deleteUser" value="Filter"/>
+</div>
+</form>
+
+<br />
+
+        <!--  Display of borrows  -->
+
+{#borrows}
+
+<div class="well">
+        <H4>
+            {borrowingID} 
+            <button class="btn btn-default pull-right"
+            data-toggle="collapse" href=#user_{id}
+            aria-expanded="false" aria-controls="user_{id}">
+            view
+            </button>
+        </H4>
+
+        <p>
+            Borrowing ID: {borrowingID}
+            <br />
+            User ID: {userID}
+            <br />
+            Resource ID: {resourceID}
+            <br />
+            Date of Borrowing: {dateOfBorrowing}
+            <br />
+            Expire Date: {expireDate}
+            <br />
+            Return Date: {returnDate}
+            <br />
+            Times Renewed: {timesRenewed}
+        </p>
+
+        <button class="btn btn-default edit-book">
+                Edit
+        </button>
+        <form id="deleteBorrowForm" action="deleteBorrow" method="post">
+            <input type="hidden" value={borrowingID} name="borrowingID"/>
+            <input type="submit" class="btn btn-default delete-book" name="deleteBorrow" value="Delete"/>
+        </form>
+    </div>
+
+{/borrows}
+
+{/body}

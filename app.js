@@ -6,11 +6,13 @@ dust = require('dustjs-helpers'),
  {Pool,Client,pg} = require('pg'),
 app = express();
 
+
+// ----- CONNECTION TO DATABASE ----- //
+
 // Body Parser Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(express.json());  // to support JSON-encoded bodies
-
 
 // DB connection
 const connectionString = "postgres://jacobwik:muJukH4tuuvA@nestor2.csc.kth.se:5432/jacobwik";
@@ -28,6 +30,10 @@ pool.on('error', (err, client) => {
     process.exit(-1)
   })
 
+
+        // ----- PAGE RENDERING ----- //
+
+// Renders users page
 app.get('/', function(req, res){
     // connectd
     client.query('SELECT * FROM users', function(err,result){
@@ -38,6 +44,7 @@ app.get('/', function(req, res){
     });
 });
 
+// Renders books page
 app.get('/books', function(req, res){
     // connected
     //NATURAL JOIN "contProd_map"  NATURAL JOIN "contProducer"
@@ -50,8 +57,35 @@ app.get('/books', function(req, res){
     });
 });
 
+// Renders borrow page
+app.get('/borrow', function(req, res){
+    // connected
+    client.query('SELECT * FROM borrowed', function(err,result){
+            
+        if(err){
+            return console.error('error running query', err);
+        }
+        res.render('borrow', {borrows: result.rows});
+    });
+});
+
+// Renders fines page
+app.get('/fines', function(req, res){
+    // connected
+    client.query('SELECT * FROM fines', function(err,result){
+            
+        if(err){
+            return console.error('error running query', err);
+        }
+        res.render('fines', {fines: result.rows});
+    });
+});
     
-app.post('/addBook',function(req,res){ 
+
+        // ----- ADD FUNCTIONS ----- //
+
+// Adds another book
+app.post('/addBook',function(req,res){
     const query1 = {
         text: 'INSERT INTO books(\"mediaID\", title, genre, \"ISBN\", edition, language,'+ 
         'publisher, \"dateOfPublication\", pages, \"prequelID\", \"sequelID\", series)'+ 
@@ -102,6 +136,7 @@ app.post('/addBook',function(req,res){
     
 });
 
+// Adds another user
 app.post('/addUser',function(req,res){
     const query = {
         text: 'INSERT INTO users(\"userID\", \"fullName\", email, \"bostadsAdress\", \"borrowedBooks\", \"dateOfBirth\")'+
@@ -228,6 +263,57 @@ app.post('/updateUser',function(req,res){
     setTimeout(function2, 500);
 });
 
+// Adds another borrow
+app.post('/addBorrow',function(req,res){
+    const query = {
+        text: 'INSERT INTO borrowed(\"borrowingID\", \"userID\", \"resourceID\", \"dateOfBorrowing\", \"expireDate\", \"returnDate\", \"timesRenewed\")'+ 
+        'VALUES($1, $2, $3, $4, $5, $6, $7)',
+        values: [req.body.borrowingID, req.body.userID, req.body.resourceID, req.body.dateOfBorrowing, req.body.expireDate, 
+            req.body.returnDate, req.body.timesRenewed],
+    };
+
+    pool.connect((err, client, done) => {
+        if (err) throw err  
+    console.log(query);
+    client.query(query,(err, res) => {
+        if (err) {
+            console.log(err.stack)
+          } else {
+            console.log(res.rows[0])
+          }
+        });
+        done();
+        res.redirect('borrow')
+    });
+});
+
+// Adds another fine
+app.post('/addFines',function(req,res){
+    const query = {
+        text: 'INSERT INTO fines(\"borrowingID\", \"amount\", \"paid\", \"daysOverExp\")'+ 
+        'VALUES($1, $2, $3, $4)',
+        values: [req.body.borrowingID, req.body.amount, req.body.paid, req.body.daysOverExp],
+    };
+
+    pool.connect((err, client, done) => {
+        if (err) throw err  
+    console.log(query);
+    client.query(query,(err, res) => {
+        if (err) {
+            console.log(err.stack)
+          } else {
+            console.log(res.rows[0])
+          }
+        });
+        done();
+        res.redirect('fines')
+    });
+});
+
+
+        // ----- DELETE FUNCTIONS ----- //
+
+// Deletes a book
 app.post('/deleteBook',function(req,res){
     const query = {
         text: 'DELETE FROM \"bookMap\" WHERE \"resourceID\"= $1;',
@@ -253,6 +339,7 @@ app.post('/deleteBook',function(req,res){
     setTimeout(function2, 500);
 });
 
+// Deletes a book
 app.post('/deleteUser',function(req,res){
     const query1 = {
         text: 'DELETE FROM admins WHERE \"userID\"= $1;',
@@ -313,6 +400,54 @@ app.post('/deleteUser',function(req,res){
     setTimeout(function2, 500);
 });
 
+// Deletes a borrow
+app.post('/deleteBorrow',function(req,res){
+    const query = {
+        text: 'DELETE FROM borrowed WHERE \"borrowingID\"= $1;',
+        values: [req.body.borrowingID],
+    };
+
+    pool.connect((err, client, done) => {
+        if (err) throw err  
+    console.log(query);
+    client.query(query,(err, res) => {
+        if (err) {
+            console.log(err.stack)
+          } else {
+            console.log(res.rows[0])
+          }
+        });
+        done();
+        res.redirect('borrow')
+    });
+});
+
+// Deletes a fine
+app.post('/deleteFines',function(req,res){
+    const query = {
+        text: 'DELETE FROM fines WHERE \"borrowingID\"= $1;',
+        values: [req.body.borrowingID],
+    };
+
+    pool.connect((err, client, done) => {
+        if (err) throw err  
+    console.log(query);
+    client.query(query,(err, res) => {
+        if (err) {
+            console.log(err.stack)
+          } else {
+            console.log(res.rows[0])
+          }
+        });
+        done();
+        res.redirect('fines')
+    });
+});
+
+
+        // ----- FILTER FUNCTIONS ----- //
+
+// Filters user criterias
 app.post('/filterUsers',function(req,res){
     var query = "SELECT * FROM USERS ";
 
@@ -329,9 +464,25 @@ app.post('/filterUsers',function(req,res){
         else{
             query = query.concat('AND ');
         }
-        query = query.concat("lower(\"fullName\") LIKE \'%"+req.body.fullName+"%\'");
-
+        query = query.concat("lower(\"fullName\") LIKE \'%"+ req.body.fullName.toLowerCase() +"%\'");
     }
+    if(req.body.email) {
+        if(!query.includes('WHERE')){
+            query = query.concat('WHERE ');
+        } else {
+            query = query.concat('AND ');
+        }
+        query = query.concat("lower(\"email\") LIKE \'%"+ req.body.email.toLowerCase() +"%\'")
+    }
+    if(req.body.bostadsAdress) {
+        if(!query.includes('WHERE')) {
+            query = query.concat('WHERE ');
+        } else {
+            query = query.concat('AND ');
+        }
+        query = query.concat("lower(\"bostadsAdress\") LIKE \'%"+ req.body.bostadsAdress.toLowerCase() +"%\'")
+    }
+
     console.log(query)
     client.query(query, function(err,result){
             
@@ -342,6 +493,131 @@ app.post('/filterUsers',function(req,res){
     });
 
 });
+
+// Filters book criterias
+app.post('/filterBooks',function(req,res){
+    var query = "SELECT * FROM books ";
+
+    if(req.body.title){
+        if(!query.includes('WHERE')){
+            query = query.concat('WHERE ');
+        }
+        else{
+            query = query.concat('AND ');
+        }
+        query = query.concat("lower(\"title\") LIKE \'%"+ req.body.title.toLowerCase() +"%\'")
+    }
+    if(req.body.mediaID){
+        if(!query.includes('WHERE')){
+            query = query.concat('WHERE ');
+        }
+        else{
+            query = query.concat('AND ');
+        }
+        query = query.concat("\"mediaID\" = "+ req.body.mediaID +" ")
+    }
+    if(req.body.genre) {
+        if(!query.includes('WHERE')){
+            query = query.concat('WHERE ');
+        } else {
+            query = query.concat('AND ');
+        }
+        query = query.concat("lower(\"genre\") LIKE \'%"+ req.body.genre.toLowerCase() +"%\'")
+    }
+    if(req.body.ISBN) {
+        if(!query.includes('WHERE')) {
+            query = query.concat('WHERE ');
+        } else {
+            query = query.concat('AND ');
+        }
+        query = query.concat("lower(\"ISBN\") LIKE \'%"+ req.body.ISBN.toLowerCase() +"%\'")
+    }
+    if(req.body.language) {
+        if(!query.includes('WHERE')) {
+            query = query.concat('WHERE ');
+        } else {
+            query = query.concat('AND ');
+        }
+        query = query.concat("lower(\"language\") LIKE \'%"+ req.body.language.toLowerCase() +"%\'")
+    }
+
+    console.log(query)
+    client.query(query, function(err,result){
+            
+        if(err){
+            return console.error('error running query', err);
+        }
+        res.render('books', {books: result.rows});
+    });
+
+});
+
+// Filters borrow criterias
+app.post('/filterBorrow',function(req,res){
+    var query = "SELECT * FROM borrowed ";
+
+    if(req.body.borrowingID){
+        if(!query.includes('WHERE')){
+            query = query.concat('WHERE ');
+        }
+        else{
+            query = query.concat('AND ');
+        }
+        query = query.concat("\"borrowingID\" = "+ req.body.borrowingID +" ")
+    }
+    if(req.body.userID) {
+        if(!query.includes('WHERE')){
+            query = query.concat('WHERE ');
+        } else {
+            query = query.concat('AND ');
+        }
+        query = query.concat("\"userID\" = "+ req.body.userID +"")
+    }
+    if(req.body.resourceID) {
+        if(!query.includes('WHERE')) {
+            query = query.concat('WHERE ');
+        } else {
+            query = query.concat('AND ');
+        }
+        query = query.concat("\"resourceID\" = "+ req.body.resourceID +"")
+    }
+
+    console.log(query)
+    client.query(query, function(err,result){
+            
+        if(err){
+            return console.error('error running query', err);
+        }
+        res.render('borrow', {borrows: result.rows});
+    });
+});
+
+// Filters fine criterias
+app.post('/filterFines',function(req,res){
+    var query = "SELECT * FROM fines ";
+
+    if(req.body.borrowingID){
+        if(!query.includes('WHERE')){
+            query = query.concat('WHERE ');
+        }
+        else{
+            query = query.concat('AND ');
+        }
+        query = query.concat("\"borrowingID\" = "+ req.body.borrowingID +" ")
+    }
+
+    console.log(query)
+    client.query(query, function(err,result){
+            
+        if(err){
+            return console.error('error running query', err);
+        }
+        res.render('fines', {fines: result.rows});
+    });
+});
+
+
+        // ----- NODE/DUST/PORT CONNECT ----- //
 
 client.connect();
 // Assign Dust to .dust files
