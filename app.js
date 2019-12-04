@@ -31,7 +31,6 @@ pool.on('error', (err, client) => {
 app.get('/', function(req, res){
     // connectd
     client.query('SELECT * FROM users', function(err,result){
-            
         if(err){
             return console.error('error running query', err);
         }
@@ -41,24 +40,45 @@ app.get('/', function(req, res){
 
 app.get('/books', function(req, res){
     // connected
-    client.query('SELECT * FROM books', function(err,result){
-            
+    //NATURAL JOIN "contProd_map"  NATURAL JOIN "contProducer"
+    client.query('SELECT * FROM books NATURAL JOIN \"bookMap\"', function(err,result){
         if(err){
             return console.error('error running query', err);
         }
         res.render('books', {books: result.rows});
+        
     });
 });
 
     
-app.post('/addBook',function(req,res){
-    const query = {
+app.post('/addBook',function(req,res){ 
+    const query1 = {
         text: 'INSERT INTO books(\"mediaID\", title, genre, \"ISBN\", edition, language,'+ 
         'publisher, \"dateOfPublication\", pages, \"prequelID\", \"sequelID\", series)'+ 
         'VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 )',
         values: [req.body.mediaID, req.body.title, req.body.genre, req.body.ISBN, req.body.edition, 
             req.body.language, req.body.publisher, req.body.dateOfPublication, req.body.pages, req.body.prequelID, 
             req.body.sequelID, req.body.series],
+    };
+
+    pool.connect((err, client, done) => {
+        if (err) throw err  
+    console.log(query1);
+    client.query(query1,(err, res) => {
+        if (err) {
+            console.log(err.stack)
+          } else {
+            console.log(res.rows[0])
+          }
+        });
+        done();
+        
+   
+
+    const query = {
+        text: 'INSERT INTO \"bookMap\"(\"mediaID\", \"resourceID\")'+ 
+        'VALUES($1, $2)',
+        values: [req.body.mediaID, req.body.resourceID],
     };
 
     pool.connect((err, client, done) => {
@@ -72,8 +92,13 @@ app.post('/addBook',function(req,res){
           }
         });
         done();
-        res.redirect('books')
+        
     });
+});
+    function function2() {
+        res.redirect('books') 
+        }
+    setTimeout(function2, 500);
     
 });
 
@@ -94,17 +119,69 @@ app.post('/addUser',function(req,res){
           } else {
             console.log(res.rows[0])
           }
-        });
-        done();
-        res.redirect('/')
-    });
+          
     
+
+    if(req.body.rad == "student"){
+        const query1 = {
+            text: 'INSERT INTO students(\"userID\", programme)'+
+            'VALUES($1, \'data\')',
+            values: [req.body.userID],
+        };
+    
+        pool.connect((err, client, done) => {
+            if (err) throw err  
+        console.log(query1);
+        client.query(query1,(err, res) => {
+            if (err) {
+                console.log(err.stack)
+              } else {
+                console.log(res.rows[0])
+              }
+            });
+            done();
+            
+        });
+    }
+    if(req.body.rad == "admin"){
+        const query2 = {
+            text: 'INSERT INTO admins(\"userID\", department, \"phoneNumber\", \"C/O-adress\", postnr, '+
+            'postadress, \"privatePhone\") VALUES($1, \'\',\'\',\'\',\'\',\'\',\'\' )',
+            values: [req.body.userID],
+        };
+    
+        pool.connect((err, client, done) => {
+            if (err) throw err  
+        console.log(query2);
+        client.query(query2,(err, res) => {
+            if (err) {
+                console.log(err.stack)
+              } else {
+                console.log(res.rows[0])
+              }
+            });
+            done();
+           
+        });
+        }
+    });
+    done();
+}); 
+    function function2() {
+        res.redirect('/') 
+        }
+    setTimeout(function2, 500);
 });
 
-app.post('/deleteBook',function(req,res){
+app.post('/updateBook',function(req,res){
+    console.log("mediaID: "+req.body.mediaID)
     const query = {
-        text: 'DELETE FROM books WHERE \"mediaID\"= $1;',
-        values: [req.body.mediaID],
+        text: 'UPDATE books SET title = $2, genre = $3, \"ISBN\" = $4, edition = $5, language = $6,'+ 
+        'publisher = $7, \"dateOfPublication\" = $8, pages = $9, \"prequelID\" = $10, \"sequelID\" = $11, series = $12 '+ 
+        'WHERE \"mediaID\" = $1',
+        values: [req.body.mediaID, req.body.title, req.body.genre, req.body.ISBN, req.body.edition, 
+            req.body.language, req.body.publisher, req.body.dateOfPublication, req.body.pages, req.body.prequelID, 
+            req.body.sequelID, req.body.series],
     };
 
     pool.connect((err, client, done) => {
@@ -118,20 +195,110 @@ app.post('/deleteBook',function(req,res){
           }
         });
         done();
-        res.redirect('books')
     });
+    function function2() {
+        res.redirect('books') 
+        }
+    setTimeout(function2, 500);
+});
+
+app.post('/updateUser',function(req,res){
+    console.log("mediaID: "+req.body.mediaID)
+    const query = {
+        text: 'UPDATE users SET  \"fullName\" = $2, email = $3, \"bostadsAdress"\ = $4,'+ 
+        '\"dateOfBirth\" = $5 WHERE \"userID\" = $1',
+        values: [req.body.userID, req.body.fullName, req.body.email, req.body.bostadsAdress, req.body.dateOfBirth],
+    };
+
+    pool.connect((err, client, done) => {
+        if (err) throw err  
+    console.log(query);
+    client.query(query,(err, res) => {
+        if (err) {
+            console.log(err.stack)
+          } else {
+            console.log(res.rows[0])
+          }
+        });
+        done();
+    });
+    function function2() {
+        res.redirect('/') 
+        }
+    setTimeout(function2, 500);
+});
+
+app.post('/deleteBook',function(req,res){
+    const query = {
+        text: 'DELETE FROM \"bookMap\" WHERE \"resourceID\"= $1;',
+        values: [req.body.resourceID],
+    };
+
+    pool.connect((err, client, done) => {
+        if (err) throw err  
+    console.log(query);
+    client.query(query,(err, res) => {
+        if (err) {
+            console.log(err.stack)
+          } else {
+            console.log(res.rows[0])
+          }
+        });
+        done();
+    });
+    
+    function function2() {
+        res.redirect('books') 
+        }
+    setTimeout(function2, 500);
 });
 
 app.post('/deleteUser',function(req,res){
-    const query = {
+    const query1 = {
+        text: 'DELETE FROM admins WHERE \"userID\"= $1;',
+        values: [req.body.userID],
+    };
+
+    pool.connect((err, client, done) => {
+        if (err) throw err  
+    console.log(query1);
+    client.query(query1,(err, res) => {
+        if (err) {
+            console.log(err.stack)
+          } else {
+            console.log(res.rows[0])
+          }
+        });
+        done();
+    });
+
+    const query2 = {
+        text: 'DELETE FROM students WHERE \"userID\"= $1;',
+        values: [req.body.userID],
+    };
+
+    pool.connect((err, client, done) => {
+        if (err) throw err  
+    console.log(query2);
+    client.query(query2,(err, res) => {
+        if (err) {
+            console.log(err.stack)
+          } else {
+            console.log(res.rows[0])
+          }
+        });
+        done();
+    });
+
+    const query3 = {
         text: 'DELETE FROM users WHERE \"userID\"= $1;',
         values: [req.body.userID],
     };
 
     pool.connect((err, client, done) => {
         if (err) throw err  
-    console.log(query);
-    client.query(query,(err, res) => {
+    console.log(query3);
+    client.query(query3,(err, res) => {
         if (err) {
             console.log(err.stack)
           } else {
@@ -139,8 +306,11 @@ app.post('/deleteUser',function(req,res){
           }
         });
         done();
-        res.redirect('/')
     });
+    function function2() {
+        res.redirect('/') 
+        }
+    setTimeout(function2, 500);
 });
 
 app.post('/filterUsers',function(req,res){

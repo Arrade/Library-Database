@@ -30,6 +30,13 @@
                 <label>Date Of Birth</label>
                 <input type="date" class="form-control" name="dateOfBirth"/>
         </div>
+        <label>Type of User</label>
+        <div class="well">
+            <label>Student</label>
+            <input type='radio' name='rad' value='student'>
+            <label>Admin</label>
+            <input type='radio' name='rad' value='admin'>
+        </div>
     </div>
 
     <input type="submit" class="btn btn-primary btn-block" name="addBook" value="Add User"/> 
@@ -57,35 +64,93 @@
         <br />
 
     {#books}
-        <div class="well">
-            <H4>
-                {fullName} 
-                <button class="btn btn-default pull-right"
-                data-toggle="collapse" href=#user_{id}
-                aria-expanded="false" aria-controls="user_{id}">
-                view
-                </button>
-            </H4>
+         <!-- collapse -->
+    <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" 
+                        href="#collapse_{userID}" aria-expanded="false" 
+                        aria-controls="book_{userID}">
+                        {fullName} 
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse_{userID}" class="panel-collapse collapse out">
+                    <div class="panel-body">
+                        <div class="well">
+                                User ID: {userID}
+                                <br />
+                                Email: {email}
+                                <br />
+                                Bostadsadress: {bostadsAdress}
+                                <br />
+                                date of birth: {dateOfBirth}
 
-            <p>
-                User ID: {userID}
-                <br />
-                Name: {fullName}
-                <br />
-                Email: {email}
-                <br />
-                Bostadsadress: {bostadsAdress}
-                <br />
-                date of birth: {dateOfBirth}
-            </p>
+                        </div>
 
-            <button class="btn btn-default edit-book">
-                    Edit
-            </button>
+                            <!-- Button trigger modal -->
+                
+                    <button type="button" class="btn btn-default edit-users" 
+                    data-toggle="modal" 
+                    data-target="#formModal"
+                    data-userid="{userID}"
+                    data-fullname="{fullName}"
+                    data-email="{email}"
+                    data-bostadsadress="{bostadsAdress}"
+                    data-dateofbirth="{dateOfBirth}"
+                    >
+                        <span class="glyphicon glyphicon-edit"
+                        aria-hidden="true"></span>
+                    </button>
             <form id="deleteUserForm" action="deleteUser" method="post">
                 <input type="hidden" value={userID} name="userID"/>
-                <input type="submit" class="btn btn-default delete-book" name="deleteUser" value="Delete"/>
+                <input type="submit" class="btn btn-danger delete-book" name="deleteUser" value="Delete"/>
             </form>
+         </div>
         </div>
+    </div>
+</div>
     {/books}
+    <!-- Modal from web -->
+    <div class="modal fade" id="formModal" tabindex="-1" 
+    role="dialog" aria-labelledby="formModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form method="post" action="updateUser">
+              <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">Edit user</h4>
+              </div>
+              <div class="modal-body">
+                      <div class="form-group">
+                              <label>Full Name</label>
+                              <input type="text" class="form-control" name="fullName" id="fullName"/>
+                      </div>
+                      <div class="form-group">
+                          
+                              <input type="hidden" class="form-control" name="userID" id="userID"/>
+                      </div>
+                      <div class="form-group">
+                              <label>E-mail</label>
+                              <input type="text" class="form-control" name="email" id="email"/>
+                      </div>
+                      <div class="form-group">
+                              <label>Bostads Adress</label>
+                              <input type="text" class="form-control" name="bostadsAdress" id="bostadsAdress"/>
+                      </div>
+                      <div class="form-group">
+                              <label>Date Of Birth</label>
+                              <input type="date" class="form-control" name="dateOfBirth" id="dateOfBirth"/>
+                      </div>
+              </div>
+              <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <input type="submit" class="btn btn-primary" 
+              value ="Save"/>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
 {/body}
