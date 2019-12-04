@@ -41,9 +41,10 @@
         </div>
         <label>Type of User</label>
         <div class="well">
-            <label>Student</label>
+            <label>Student &ensp;</label>
             <input type='radio' name='rad' value='student'>
-            <label>Admin</label>
+            &emsp;&emsp;&emsp;
+            <label>Admin &ensp;</label>
             <input type='radio' name='rad' value='admin'>
         </div>
     </div>
