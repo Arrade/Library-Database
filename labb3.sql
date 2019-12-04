@@ -11,7 +11,7 @@ CREATE TABLE "users" (
     "fullName" text,
     "email" text,
     "bostadsAdress" text,
-    "borrowedBooks" int,
+    "borrowedBooks" int CHECK ("borrowedBooks" >= 0),
     "dateOfBirth" date
 );
 
@@ -39,7 +39,7 @@ CREATE TABLE "books" (
     "language" text,
     "publisher" text,
     "dateOfPublication" date,
-    "pages" int,
+    "pages" int CHECK ("pages" >= 0),
     "prequelID" text,
     "sequelID" text,
     "series" text
@@ -55,17 +55,17 @@ CREATE TABLE "borrowed" (
     "userID" int REFERENCES users,
     "resourceID" int REFERENCES "bookMap",
     "dateOfBorrowing" date NOT NULL, --2.--
-    "expireDate" date,
+    "expireDate" date CHECK ("expireDate" > "dateOfBorrowing"),
     "returnDate" date,
-    "timesRenewed" int NOT NULL --2.--
+    "timesRenewed" int NOT NULL CHECK ("timesRenewed" >= 0 AND "timesRenewed" < 4) --2.--
 );
     
 
 CREATE TABLE "fines" (
     "borrowingID" int REFERENCES borrowed,
-    "amount" int,
-    "paid" boolean,
-    "daysOverExp" int
+    "amount" int CHECK ("amount" >= 0),
+    "paid" boolean CHECK ("paid" >= 0),
+    "daysOverExp" int CHECK ("daysOverExp" >= 0)
 );
 
 CREATE TABLE "contProducer" (
