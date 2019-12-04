@@ -461,12 +461,33 @@ app.post('/deleteBook',function(req,res){
           }
         });
         done();
+
+        const query1 = {
+            text: 'DELETE FROM \"contProd_map\" WHERE \"mediaID\"= $1;',
+            values: [req.body.mediaID],
+        };
+    
+        pool.connect((err, client, done) => {
+            if (err) throw err  
+        console.log(query1);
+        client.query(query1,(err, res) => {
+            if (err) {
+                console.log(err.stack)
+              } else {
+                console.log(res.rows[0])
+              }
+            });
+            done();
+    
+            
+        });
+        
     });
     
     function function2() {
         res.redirect('books') 
         }
-    setTimeout(function2, 500);
+    setTimeout(function2, 1000);
 });
 
 // Deletes a book

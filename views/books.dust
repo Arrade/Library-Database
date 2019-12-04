@@ -177,6 +177,7 @@
                     <br />
                     <form id="deleteBookForm" action="deleteBook" method="post">
                         <input type="hidden" value={resourceID} name="resourceID"/>
+                        <input type="hidden" value={mediaID} name="mediaID"/>
                         <input type="submit" class="btn btn-danger delete-book" name="deleteBook" value="Delete"/>
                     </form>
                     </div>
